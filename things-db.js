@@ -1,123 +1,123 @@
-const mariadb = require('mariadb')
+const mariadb = require("mariadb");
 
 const pool = mariadb.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'simple_list_db'
-})
+  host: "database-1.cmzv6odushcz.eu-central-1.rds.amazonaws.com",
+  user: "admin",
+  password: "hamburg2020",
+  database: "school",
+});
 
 class ThingsDB {
+  async getAllThings() {
+    let conn;
 
-    async getAllThings() {
-        let conn
-        
-        try {
-            conn = await pool.getConnection()
-            const rows = await conn.query('SELECT * from things')
-    
-            return rows
-        } catch (err) {
-    
-            return -1
-        } finally {
-            if (conn) {
-                conn.end()
-            }
-        }
+    try {
+      conn = await pool.getConnection();
+      const rows = await conn.query("SELECT * from things");
+
+      return rows;
+    } catch (err) {
+      return -1;
+    } finally {
+      if (conn) {
+        conn.end();
+      }
     }
+  }
 
-    async getThing(id) {
-        let conn
-        
-        try {
-            conn = await pool.getConnection()
-            const rows = await conn.query('SELECT * from things WHERE id = ?', [id])
-    
-            if (rows.length) {
-                return rows[0]
-            } else {
-                return []
-            }
+  async getThing(id) {
+    let conn;
 
-        } catch (err) {
-    
-            return -1
-        } finally {
-            if (conn) {
-                conn.end()
-            }
-        }
+    try {
+      conn = await pool.getConnection();
+      const rows = await conn.query("SELECT * from things WHERE id = ?", [id]);
+
+      if (rows.length) {
+        return rows[0];
+      } else {
+        return [];
+      }
+    } catch (err) {
+      return -1;
+    } finally {
+      if (conn) {
+        conn.end();
+      }
     }
+  }
 
-    async insertThing(name, description) {
-        let conn
-        
-        try {
-            conn = await pool.getConnection()
-            const result = await conn.query('INSERT INTO things (name, description) VALUES(?, ?)', [name, description])
-            
-            if (result.affectedRows == 1) {
-                return {
-                    id: result.insertId,
-                    name: name,
-                    description: description
-                }
-            } else {
-                return 0
-            }
-        } catch (err) {
-    
-            return -1
-        } finally {
-            if (conn) {
-                conn.end()
-            }
-        }
-    }
+  async insertThing(name, description) {
+    let conn;
 
-    async updateThing(id, name, description) {
-        let conn
-        
-        try {
-            conn = await pool.getConnection()
-            const result = await conn.query('UPDATE things SET name = ?, description = ? WHERE id = ?', [name, description, id])
-            
-            if (result.affectedRows == 1) {
-                return {
-                    id: id,
-                    name: name,
-                    description: description
-                }
-            } else {
-                return 0
-            }
-        } catch (err) {
-            return -1
-        } finally {
-            if (conn) {
-                conn.end()
-            }
-        }
-    }
+    try {
+      conn = await pool.getConnection();
+      const result = await conn.query(
+        "INSERT INTO things (name, description) VALUES(?, ?)",
+        [name, description]
+      );
 
-    async deleteThing(id) {
-        let conn
-        
-        try {
-            conn = await pool.getConnection()
-            const result = await conn.query('DELETE from things WHERE id = ?', [id])
-            
-            return result.affectedRows
-        } catch (err) {
-    
-            return -1
-        } finally {
-            if (conn) {
-                conn.end()
-            }
-        }
+      if (result.affectedRows == 1) {
+        return {
+          id: result.insertId,
+          name: name,
+          description: description,
+        };
+      } else {
+        return 0;
+      }
+    } catch (err) {
+      return -1;
+    } finally {
+      if (conn) {
+        conn.end();
+      }
     }
+  }
+
+  async updateThing(id, name, description) {
+    let conn;
+
+    try {
+      conn = await pool.getConnection();
+      const result = await conn.query(
+        "UPDATE things SET name = ?, description = ? WHERE id = ?",
+        [name, description, id]
+      );
+
+      if (result.affectedRows == 1) {
+        return {
+          id: id,
+          name: name,
+          description: description,
+        };
+      } else {
+        return 0;
+      }
+    } catch (err) {
+      return -1;
+    } finally {
+      if (conn) {
+        conn.end();
+      }
+    }
+  }
+
+  async deleteThing(id) {
+    let conn;
+
+    try {
+      conn = await pool.getConnection();
+      const result = await conn.query("DELETE from things WHERE id = ?", [id]);
+
+      return result.affectedRows;
+    } catch (err) {
+      return -1;
+    } finally {
+      if (conn) {
+        conn.end();
+      }
+    }
+  }
 }
 
-module.exports = new ThingsDB()
+module.exports = new ThingsDB();
